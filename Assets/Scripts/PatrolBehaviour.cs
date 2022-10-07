@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PatrolBehaviour : MonoBehaviour
@@ -8,6 +9,7 @@ public class PatrolBehaviour : MonoBehaviour
 
 
     private float _currentTime;
+    private float _travelTime;
     
     private CircularBuffer<Transform> _circleDestinations;
     
@@ -39,13 +41,16 @@ public class PatrolBehaviour : MonoBehaviour
         
         _currentTime += Time.deltaTime;
 
-        var progress = _currentTime / _speed;
+        var progress = _currentTime / _travelTime;
         var newPosition = Vector3.Lerp(_circleDestinations[0].position, _circleDestinations[1].position, progress);
         transform.position = newPosition;
 
-        if (!(_currentTime >= _speed)) return;
+        if (!(_currentTime >= _travelTime)) return;
         _currentTime = 0f;
         _circleDestinations.Add(_circleDestinations[0]);
         _isWaiting = !_isWaiting;
+        
+        var distance = Vector3.Distance(_circleDestinations[0].position, _circleDestinations[1].position);
+        _travelTime = distance / _speed;
     }
 }
